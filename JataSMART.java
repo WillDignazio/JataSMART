@@ -8,15 +8,17 @@ public class JataSMART
 	
 	private class SkDisk
 	{
-		public long _skDiskAddr;
+		private long _skDiskAddr;
 		
 		private SkDisk()
 		{
 		}
+
+
+		public native boolean smartAvailable();
 	}
 
 	private native SkDisk open(String path);
-	private native void hello();
 
 	public static void main(String[] args)
 	{
@@ -25,5 +27,6 @@ public class JataSMART
 		
 		jsmart = new JataSMART();
 		disk = jsmart.open("/dev/xvda");
+		System.out.println(disk.smartAvailable());
 	}
 }
