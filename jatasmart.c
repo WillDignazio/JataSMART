@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <errno.h>
 
@@ -32,6 +33,7 @@ throwSkException(JNIEnv *env, int err, const char *msg)
 	case ENOTSUP:
 		jobj = (*env)->FindClass(env, "java/lang/UnsupportedOperationException");
 		break;
+	case ENODATA:
 	case EIO:
 	case ENODEV:
 		jobj = (*env)->FindClass(env, "java/io/IOException");
@@ -90,8 +92,33 @@ getskdisk(JNIEnv *env, jobject jskdisk)
 	return skdisk;
 }
 
+/* Get the size of the opened disk */
+JNIEXPORT jlong JNICALL
+Java_JataSMART_00024SkDisk_getSize(JNIEnv *env, jobject this)
+{
+	SkDisk *disk;
+	uint64_t sksz;
+	int ret;
+
+	sksz = 0;
+
+	disk = getskdisk(env, this);
+	if(disk == NULL)
+		goto fail;
+
+	ret = sk_disk_get_size(disk, &sksz);
+	if(ret == -1) {
+		throwSkException(env, errno, strerror(errno));
+		goto fail;
+	}
+
+fail:
+	return sksz;
+}
+
+/* Get whether SMART statistics are available for the disk */
 JNIEXPORT jboolean JNICALL
-Java_JataSMART_00024SkDisk_smartAvailable(JNIEnv *env, jobject this)
+Java_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
 	SkBool avail;

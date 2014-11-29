@@ -15,7 +15,8 @@ public class JataSMART
 		}
 
 
-		public native boolean smartAvailable();
+		public native boolean isSMARTAvailable();
+		public native long getSize();
 	}
 
 	private native SkDisk open(String path);
@@ -27,6 +28,7 @@ public class JataSMART
 		
 		jsmart = new JataSMART();
 		disk = jsmart.open("/dev/xvda");
-		System.out.println(disk.smartAvailable());
+		System.out.println(disk.isSMARTAvailable());
+		System.out.println(disk.getSize());
 	}
 }
