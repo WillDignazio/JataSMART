@@ -124,7 +124,6 @@ Java_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
 	SkBool avail;
 	int ret;
 
-	printf("Getting smart disk information\n");
 	disk = getskdisk(env, this);
 	if(disk == NULL)
 		return JNI_FALSE;
@@ -138,6 +137,44 @@ Java_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
 	return (avail == TRUE) ? JNI_TRUE : JNI_FALSE;
 }
 
+/* Check if the drive is in sleep mode */
+JNIExport jboolean JNICALL
+Java_JataSMART_00024SkDisk_isSleepMode(JNIEnv *env, jobject this)
+{
+	SkDisk *disk;
+	SkBool awake;
+	int ret;
+
+	disk = getskdisk(env, this);
+	if(disk == NULL)
+		return JNI_FALSE;
+
+	ret = sk_disk_check_sleep_mode(disk, &awake);
+	if(ret == -1) {
+		throwSkException(env, errno, strerror(errno));
+		return JNI_FALSE;
+	}
+
+	return (awake == TRUE) ? JNI_TRUE : JNI_FALSE;
+}
+
+/* Check whether we can identify this device */
+JNIExport jboolean JNICALL
+Java_JataSMART_00024SkDisk_isIdentifyAvailable(JNIEnv *env, jobject this)
+{
+	SkDisk *disk;
+	SkBool avail;
+
+	disk = getskdisk(env, this);
+	if(disk == NULL)
+		return JNI_FALSE;
+
+	/* Always returns 0 */
+	sk_disk_identify_is_available(disk, &avail);
+	return (avail == TRUE) ? JNI_TRUE : JNI_FALSE;
+}
+
+/* Open a SkDisk on the specified path */
 JNIEXPORT jobject JNICALL
 Java_JataSMART_open(JNIEnv *env, jobject this, jstring jpath)
 {

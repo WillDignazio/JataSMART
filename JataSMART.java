@@ -14,9 +14,16 @@ public class JataSMART
 		{
 		}
 
-
-		public native boolean isSMARTAvailable();
 		public native long getSize();
+		public native boolean isSMARTAvailable();
+		public native boolean isSleepMode();
+		public native boolean isIdentifyAvailable();
+		public native boolean getSMARTStatus();
+		public native long getPowerOn();
+		public native long getPowerCycle();
+		public native long getTemperature();
+
+		public native String toString();
 	}
 
 	private native SkDisk open(String path);
