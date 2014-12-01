@@ -138,7 +138,7 @@ Java_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
 }
 
 /* Check if the drive is in sleep mode */
-JNIExport jboolean JNICALL
+JNIEXPORT jboolean JNICALL
 Java_JataSMART_00024SkDisk_isSleepMode(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
@@ -159,7 +159,7 @@ Java_JataSMART_00024SkDisk_isSleepMode(JNIEnv *env, jobject this)
 }
 
 /* Check whether we can identify this device */
-JNIExport jboolean JNICALL
+JNIEXPORT jboolean JNICALL
 Java_JataSMART_00024SkDisk_isIdentifyAvailable(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
