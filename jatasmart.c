@@ -35,6 +35,7 @@ throwSkException(JNIEnv *env, int err, const char *msg)
 		break;
 	case ENODATA:
 	case EIO:
+	case ENXIO:
 	case ENODEV:
 		jobj = (*env)->FindClass(env, "java/io/IOException");
 		break;
@@ -136,7 +137,7 @@ Java_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
 
 	return (avail == TRUE) ? JNI_TRUE : JNI_FALSE;
 }
-
+		
 /* Check if the drive is in sleep mode */
 JNIEXPORT jboolean JNICALL
 Java_JataSMART_00024SkDisk_isSleepMode(JNIEnv *env, jobject this)
@@ -172,6 +173,44 @@ Java_JataSMART_00024SkDisk_isIdentifyAvailable(JNIEnv *env, jobject this)
 	/* Always returns 0 */
 	sk_disk_identify_is_available(disk, &avail);
 	return (avail == TRUE) ? JNI_TRUE : JNI_FALSE;
+}
+
+/* Check whether the SMART status is good or bad */
+JNIEXPORT jboolean JNICALL
+Java_JataSMART_0024SkDisk_getSMARTStatus(JNIEnv *env, jobject this)
+{
+	SkDisk *disk;
+	SkBool good;
+	int ret;
+
+	disk = getskdisk(env, this);
+	if(disk == NULL)
+		return JNI_FALSE;
+
+	ret = sk_disk_smart_status(disk, &good);
+	if(ret == -1) {
+		throwSkException(env, errno, strerror(errno));
+		return JNI_FALSE;
+	}
+
+	return (good == TRUE) ? JNI_TRUE : JNI_FALSE;
+}
+
+/* Get the power on time for the device */
+JNIEXPORT jlong JNICALL
+Java_JataSMART_0024SkDisk_getPowerOn(JNIEnv *env, jobject this)
+{
+	SkDisk *disk;
+	uint64_t poweron;
+	int ret;
+
+	ret = sk_disk_smart_get_power_on(disk, &poweron);
+	if(ret == -1) {
+		throwSkException(env, errno, strerror(errno));
+		return -1;
+	}
+
+	return poweron;
 }
 
 /* Open a SkDisk on the specified path */
