@@ -42,5 +42,5 @@ public class JataSMART
 		public native String toString();
 	}
 
-	private native SkDisk open(String path);
+	public native SkDisk open(String path);
 }
