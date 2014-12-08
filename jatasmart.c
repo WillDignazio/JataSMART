@@ -1,3 +1,11 @@
+/**
+ * Copyright © 2014 Will Dignazio
+ *
+ * C JNI Wrapper for the atasmart library.
+ * These methods are called directly by the JataSMART* classes
+ * in JataSMART.java.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
