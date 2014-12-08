@@ -148,7 +148,7 @@ Java_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
 		
 /* Check if the drive is in sleep mode */
 JNIEXPORT jboolean JNICALL
-Java_JataSMART_00024SkDisk_isSleepMode(JNIEnv *env, jobject this)
+Java_JataSMART_00024SkDisk_checkSleepMode(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
 	SkBool awake;

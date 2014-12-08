@@ -1,6 +1,6 @@
 *.o
 *.so
 *.class
-JataSMART*.h
+net_*.h
 test/
 *~

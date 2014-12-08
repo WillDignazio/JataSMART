@@ -29,17 +29,60 @@ public class JataSMART
 		{
 		}
 
+		/**
+		 * Gets the size of the opened disk.
+		 * @return long Size of disk in bytes.
+		 */
 		public native long getSize();
-		public native boolean isSMARTAvailable();
-		public native boolean isSleepMode();
-		public native boolean isIdentifyAvailabe();
-		public native boolean getSMARTStatus();
-		public native long getPowerOn();
-		public native long getPowerCycle();
-		public native long getBadSectors();
-		public native long getTemperature();
 
-		public native String toString();
+		/**
+		 * Returns whether SMART commands are available for
+		 * this device.
+		 * @return boolean Whether SMART is available.
+		 */
+		public native boolean isSMARTAvailable();
+
+		/**
+		 * Returns whether the disk is currently in sleep mode.
+		 * @return boolean True if device is awake, False if asleep
+		 */
+		public native boolean checkSleepMode();
+
+		/**
+		 * Returns whether the drive has identify capability.
+		 * @return boolean True if it does, False if it does not
+		 */
+		public native boolean isIdentifyAvailable();
+
+		/**
+		 * Get the general SMART status of the disk.
+		 * @return boolean True for good, False for bad.
+		 */
+		public native boolean getSMARTStatus();
+
+		/**
+		 * Get a 64 bit timestamp for power on time of the device.
+		 * @return long Power on time of device.
+		 */
+		public native long getPowerOn();
+
+		/**
+		 * Get number of times device has been power cycled.
+		 * @return long Power cycle count of device.
+		 */
+		public native long getPowerCycle();
+
+		/**
+		 * Get number of known bad sectors on device.
+		 * @return long Number of known bad sectors
+		 */
+		public native long getBadSectors();
+
+		/**
+		 * Get the temperature of the device in Kelvins.
+		 * @return long Temperature of device in Kelvins
+		 */
+		public native long getTemperature();
 	}
 
 	/**
