@@ -42,5 +42,17 @@ public class JataSMART
 		public native String toString();
 	}
 
+	/**
+	 * Open the given device, and produce an SkDisk object.
+	 * This creates a specialized SkDisk object using the underlying
+	 * JNI wrapper code, giving an interface to the libatasmart
+	 * library methods.
+	 *
+	 * The path given in this is expected to be a block device that
+	 * supports SMART.
+	 * 
+	 * @param path Path to disk device
+	 * @return SkDisk SkDisk device interface object
+	 */
 	public native SkDisk open(String path);
 }
