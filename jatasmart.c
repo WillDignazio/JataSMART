@@ -23,7 +23,6 @@
 jint
 throwSkException(JNIEnv *env, int err, const char *msg)
 {
-	char *errstr;
 	jobject jobj;
 	int ret;
 
@@ -61,6 +60,8 @@ _getskdiskid(JNIEnv *env, jobject jskdisk)
 	jfieldID jaddrid;
 	jobject cls;
 
+	jaddrid = NULL;
+
 	cls = (*env)->FindClass(env, "JataSMART$SkDisk");
 	if(cls == NULL)
 		goto fail;
@@ -73,6 +74,7 @@ fail:
 	return jaddrid;
 }
 
+#if 0
 /* Set the long address field for the C SkDisk pointer */
 static void
 setskdisk(JNIEnv *env, jobject jskdisk, SkDisk *skdisk)
@@ -85,6 +87,7 @@ setskdisk(JNIEnv *env, jobject jskdisk, SkDisk *skdisk)
 
 	(*env)->SetLongField(env, jskdisk, jaddrid, (long)skdisk);
 }
+#endif
 
 /* Get the long address field fot he C SkDisk pointer */
 static SkDisk*
@@ -103,7 +106,7 @@ getskdisk(JNIEnv *env, jobject jskdisk)
 
 /* Get the size of the opened disk */
 JNIEXPORT jlong JNICALL
-Java_JataSMART_00024SkDisk_getSize(JNIEnv *env, jobject this)
+Java_net_digitalbebop_JataSMART_00024SkDisk_getSize(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
 	uint64_t sksz;
@@ -127,7 +130,7 @@ fail:
 
 /* Get whether SMART statistics are available for the disk */
 JNIEXPORT jboolean JNICALL
-Java_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
+Java_net_digitalbebop_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
 	SkBool avail;
@@ -148,7 +151,7 @@ Java_JataSMART_00024SkDisk_isSMARTAvailable(JNIEnv *env, jobject this)
 		
 /* Check if the drive is in sleep mode */
 JNIEXPORT jboolean JNICALL
-Java_JataSMART_00024SkDisk_checkSleepMode(JNIEnv *env, jobject this)
+Java_net_digitalbebop_JataSMART_00024SkDisk_checkSleepMode(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
 	SkBool awake;
@@ -169,7 +172,7 @@ Java_JataSMART_00024SkDisk_checkSleepMode(JNIEnv *env, jobject this)
 
 /* Check whether we can identify this device */
 JNIEXPORT jboolean JNICALL
-Java_JataSMART_00024SkDisk_isIdentifyAvailable(JNIEnv *env, jobject this)
+Java_net_digitalbebop_JataSMART_00024SkDisk_isIdentifyAvailable(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
 	SkBool avail;
@@ -185,7 +188,7 @@ Java_JataSMART_00024SkDisk_isIdentifyAvailable(JNIEnv *env, jobject this)
 
 /* Check whether the SMART status is good or bad */
 JNIEXPORT jboolean JNICALL
-Java_JataSMART_0024SkDisk_getSMARTStatus(JNIEnv *env, jobject this)
+Java_net_digitalbebop_JataSMART_0024SkDisk_getSMARTStatus(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
 	SkBool good;
@@ -206,11 +209,15 @@ Java_JataSMART_0024SkDisk_getSMARTStatus(JNIEnv *env, jobject this)
 
 /* Get the power on time for the device */
 JNIEXPORT jlong JNICALL
-Java_JataSMART_0024SkDisk_getPowerOn(JNIEnv *env, jobject this)
+Java_net_digitalbebop_JataSMART_0024SkDisk_getPowerOn(JNIEnv *env, jobject this)
 {
 	SkDisk *disk;
 	uint64_t poweron;
 	int ret;
+
+	disk = getskdisk(env, this);
+	if(disk == NULL)
+		return JNI_FALSE;
 
 	ret = sk_disk_smart_get_power_on(disk, &poweron);
 	if(ret == -1) {
@@ -221,9 +228,72 @@ Java_JataSMART_0024SkDisk_getPowerOn(JNIEnv *env, jobject this)
 	return poweron;
 }
 
-/* Open a SkDisk on the specified path */
+/* Get the power cycle count for the device */
+JNIEXPORT jlong JNICALL 
+Java_net_digitalbebop_JataSMART_00024SkDisk_getPowerCycle(JNIEnv *env, jobject this)
+{
+	SkDisk *disk;
+	uint64_t count;
+	int ret;
+
+	disk = getskdisk(env, this);
+	if(disk == NULL)
+		return 0;
+
+	ret = sk_disk_smart_get_power_cycle(disk, &count);
+	if(ret == -1) {
+		throwSkException(env, errno, strerror(errno));
+		return 0;
+	}
+
+	return count;
+}
+
+/** Get the number of bad sectors in the drive */
+JNIEXPORT jlong JNICALL
+Java_net_digitalbebop_JataSMART_00024SkDisk_getBadSectors(JNIEnv *env, jobject this)
+{
+	SkDisk *disk;
+	uint64_t sectors;
+	int ret;
+
+	disk = getskdisk(env, this);
+	if(disk == NULL)
+		return 0;
+
+	ret = sk_disk_smart_get_bad(disk, &sectors);
+	if(ret == -1) {
+		throwSkException(env, errno, strerror(errno));
+		return 0;
+	}
+
+	return sectors;
+}
+
+/** Get the temperature of the drive */
+JNIEXPORT jlong JNICALL 
+Java_net_digitalbebop_JataSMART_00024SkDisk_getTemperature(JNIEnv *env, jobject this)
+{
+	SkDisk *disk;
+	uint64_t kelvin;
+	int ret;
+
+	disk = getskdisk(env, this);
+	if(disk == NULL)
+		return 0;
+
+	ret = sk_disk_smart_get_temperature(disk, &kelvin);
+	if(ret == -1) {
+		throwSkException(env, errno, strerror(errno));
+		return 0;
+	}
+
+	return kelvin;
+}
+
+/** Open a SkDisk on the specified path */
 JNIEXPORT jobject JNICALL
-Java_JataSMART_open(JNIEnv *env, jobject this, jstring jpath)
+Java_net_digitalbebop_JataSMART_open(JNIEnv *env, jobject this, jstring jpath)
 {
 	jobject jobj;
 	jmethodID constructor;
@@ -233,8 +303,10 @@ Java_JataSMART_open(JNIEnv *env, jobject this, jstring jpath)
 	SkDisk *skdisk;
 	int ret;
 
+	jobj = NULL;
 	jaddrid = NULL;
 	skdisk = NULL;
+	constructor = NULL;
 	
 	/* XXX Handle class build failure */
 	cls = (*env)->FindClass(env, "JataSMART$SkDisk");

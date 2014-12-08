@@ -20,12 +20,12 @@ public class JataSMART
 	{
 		System.loadLibrary("jatasmart");
 	}
-	
-	private class SkDisk
+
+	public static class SkDisk
 	{
 		private long _skDiskAddr;
-		
-		private SkDisk()
+
+		public SkDisk()
 		{
 		}
 
@@ -97,5 +97,5 @@ public class JataSMART
 	 * @param path Path to disk device
 	 * @return SkDisk SkDisk device interface object
 	 */
-	public native SkDisk open(String path);
+	public native static SkDisk open(String path);
 }
