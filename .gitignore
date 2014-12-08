@@ -2,3 +2,5 @@
 *.so
 *.class
 JataSMART*.h
+test/
+*~

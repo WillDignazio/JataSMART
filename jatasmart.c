@@ -6,8 +6,8 @@
 
 #include <jni.h>
 #include <atasmart.h>
-#include "JataSMART.h"
-#include "JataSMART_SkDisk.h"
+#include "net_digitalbebop_JataSMART.h"
+#include "net_digitalbebop_JataSMART_SkDisk.h"
 
 #define JSKERR	0xDEADBEEF
 

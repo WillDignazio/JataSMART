@@ -1,3 +1,5 @@
+package net.digitalbebop;
+
 public class JataSMART
 {
 	/* One time initialize libatasmart */
